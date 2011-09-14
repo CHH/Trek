@@ -1,0 +1,9 @@
+#!/bin/bash
+#/ Displays all commands
+#/
+
+COMMAND_DIR=$(dirname "$0")
+
+for cmd in "$COMMAND_DIR"/*; do
+    echo $(basename "$cmd") | sed -e "s/trek\-//"
+done

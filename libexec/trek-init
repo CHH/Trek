@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+table_exists() {
+    local result=$(trek-query <<< "SHOW TABLES LIKE '$1';")
+
+    if [ -z "$result" ]; then
+        return 1
+    fi
+}
+
+create_version_table() {
+    trek-query <<SQL
+CREATE TABLE trek_version (version TEXT);
+INSERT INTO trek_version(version) VALUES ('0');
+SQL
+
+}
+
+if table_exists "trek_version"
+then
+    echo "Already initialized." >&2
+    exit 1
+fi
+
+create_version_table
+echo "Success! You can now use Trek to migrate your Database"

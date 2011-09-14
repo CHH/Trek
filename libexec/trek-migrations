@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+current_version=$(trek-version)
+
+for migration in "$MIGRATIONS_DIR"/*.up; do
+    basename=$(basename "$migration" .up)
+    version=$(tr -cd [:digit:] <<< "$basename")
+
+    if [ "$1" = "--bare" ]; then
+        prefix=
+    else
+        if [ $current_version -eq $version ]; then
+            prefix="* "
+        else
+            prefix="  "
+        fi
+    fi
+
+    echo "$prefix$basename"
+done

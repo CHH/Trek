@@ -1,0 +1,128 @@
+#!/bin/bash
+
+execute() {
+    local query="$1"
+
+    if [ -z "$query" ]; then
+        query="$(cat)"
+    fi
+
+    trek-query <<< "$query"
+}
+
+to_uppercase() {
+    tr "[:lower:]" "[:upper:]" <<< "$1"
+}
+
+create_table() {
+    local sql=
+    local table=
+    local last_column=
+    local column_def=
+
+    while test $# -ne 0; do
+        arg="$1"
+        case $arg in
+            column)
+                if [ -z "$last_column" ]; then
+                    column_def="$2"
+                else
+                    column_def="$column_def, $2"
+                fi
+                last_column="$2"
+                shift
+                ;;
+            *)
+                if [ -z "$last_column" ]; then
+                    table="$1"
+                else
+                    local option=$(to_uppercase "$1")
+                    column_def="$column_def $option"
+                fi
+                ;;
+        esac
+        shift
+    done
+
+    sql="CREATE TABLE $table ($column_def)"
+
+    execute "$sql;"
+}
+
+drop_table() {
+    local table="$1"
+
+    if [ -z "$table" ]; then
+        echo "drop: No Table given" >&2
+        return 1
+    fi
+
+    execute "DROP TABLE $table;"
+}
+
+add_column() {
+    if [ $# -lt 2 ]; then
+        echo "add_column: Not enough arguments" >&2
+        return 1
+    fi
+
+    table="$1"
+    column="$2"
+    shift
+    shift
+
+    options="$@"
+
+    execute <<SQL
+ALTER TABLE $table ADD COLUMN $column $options;
+SQL
+}
+
+rename_column() {
+    if [ $# -lt 3 ]; then
+        echo "rename_column: Not enough arguments" >&2
+        return 1
+    fi
+    
+    table="$1"
+    column="$2"
+    to_column="$3"
+
+    execute <<SQL
+ALTER TABLE $table CHANGE COLUMN $column $to_column;
+SQL
+}
+
+change_column() {
+    if [ $# -lt 3 ]; then
+        echo "change_column: Not enough arguments" >&2
+        return 1
+    fi
+
+    table="$1"
+    column="$2"
+
+    shift
+    shift
+
+    options="$@"
+
+    execute <<SQL
+ALTER TABLE $table MODIFY COLUMN $column $options;
+SQL
+}
+
+remove_column() {
+    if [ $# -lt 2 ]; then
+        echo "remove_column: Not enough arguments" >&2
+        return 1
+    fi
+
+    table="$1"
+    column="$2"
+
+    execute <<SQL
+ALTER TABLE $table DROP COLUMN $column;
+SQL
+}
+

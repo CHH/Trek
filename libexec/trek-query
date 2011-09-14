@@ -1,0 +1,46 @@
+#!/bin/bash
+#/ Sends queries received via STDIN to the configured Database
+#/
+
+set -e
+
+DIRNAME=$(dirname $0)
+
+source "$DBCONFIG"
+
+query="$(cat)"
+
+if [ -z "$query" ]; then
+    trek-help "query" >&2
+    exit 1
+fi
+
+options=
+
+if [ -z "$database" ]; then
+    echo "No Database configured. Please set the \"database\" variable in $DBCONFIG" >&2
+    exit 1
+fi
+
+if [ -n "$username" ]; then
+    options="$options --user=$username"
+fi
+
+if [ -n "$password" ]; then
+    options="$options --password=$password"
+fi
+
+if [ -n "$hostname" ]; then
+    options="$options --host=$hostname"
+fi
+
+if [ -n "$port" ]; then
+    options="$options --port=$port"
+fi
+
+if [ -n "$socket" ]; then
+    options="$options --socket=$socket"
+fi
+
+mysql $options $database <<< "$query"
+

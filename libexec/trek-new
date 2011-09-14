@@ -1,0 +1,41 @@
+#!/bin/bash
+
+DIRNAME=$(dirname $0)
+
+new_id() {
+    date -u +%Y%m%d%H%M%S
+}
+
+create_migration() {
+    local file="$1"
+
+    touch "$MIGRATIONS_DIR/$file"
+    chmod +x "$MIGRATIONS_DIR/$file"
+
+    echo "Created $file"
+}
+
+open_editor() {
+    if [ -n "$TREK_EDITOR" ]; then
+        echo "Launching $TREK_EDITOR"
+        "$TREK_EDITOR" $@ > /dev/null
+    fi
+}
+
+name="$@"
+
+if [ $# -eq 0 ]; then
+    echo "trek: No Migration Name given. Please pick a descriptive one." >&2
+    exit 1
+fi
+
+name=$(tr ' ' '-' <<< "$name")
+
+up="$(new_id)-$name.up"
+down="$(new_id)-$name.down"
+
+create_migration "$up"
+create_migration "$down"
+
+cd "$MIGRATIONS_DIR"
+open_editor "$up" "$down"

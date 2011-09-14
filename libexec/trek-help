@@ -1,0 +1,18 @@
+#!/bin/bash
+#/ Displays Help
+#/
+#/ Usage: trek-help [<command>]
+#/
+
+file="$1"
+
+DIRNAME=$(dirname "$0")
+TREK_DIR=$(readlink -f "$DIRNAME/../")
+
+if [ -z "$file" ]; then
+    file="$TREK_DIR/bin/trek"
+else
+    file="$DIRNAME/trek-$1"
+fi
+
+grep '^#/' <"$file" | cut -c4- >&2

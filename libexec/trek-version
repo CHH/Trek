@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Update version if given
+if [ -n "$1" ]; then
+    trek-query <<< "UPDATE trek_version SET version = '$1';"
+fi
+
+select="SELECT version FROM trek_version LIMIT 0,1;"
+result_set=$(echo "$select" | trek-query)
+
+echo "$result_set" | sed "1 d"

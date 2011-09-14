@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+set -e
+
+DIRNAME=$(dirname "$0")
+LIB_DIR=$(readlink -f "$DIRNAME/../lib/")
+
+source "$LIB_DIR/trek-dsl"
+
+migration_version() {
+    tr -cd [:digit:] <<< "$1"
+}
+
+highest_version() {
+    local migration=$(ls *.up | tail -1)
+    migration_version "$migration"
+}
+
+migrate_up() {
+    local from="$1"
+    local to="$2"
+
+    local version=
+    local migration=
+    local basename=
+
+    for migration in "$MIGRATIONS_DIR"/*.up; do
+        basename=$(basename "$migration")
+        version=$(migration_version "$basename")
+
+        if [ $version -gt $from ]; then
+            echo "Executing $basename"
+            source "$migration"
+            trek-version "$version" > /dev/null
+        fi
+
+        if [ $version -eq $to ]; then
+            break
+        fi
+    done
+}
+
+migrate_down() {
+    local from="$1"
+    local to="$2"
+
+    local version=
+    local migration=
+    local basename=
+
+    local migrations=$(find "$MIGRATIONS_DIR"/*.down | sort -r)
+
+    for migration in $migrations; do
+        basename=$(basename "$migration")
+        version=$(migration_version "$basename")
+
+        if [ $version -le $from ] && [ $version -gt $to ]; then
+            echo "Executing $basename"
+            source "$migration"
+            trek-version "$version" > /dev/null
+        fi
+
+        if [ $version -eq $to ]; then
+            break
+        fi
+    done
+}
+
+current_version=$(trek-version)
+to_version="$1"
+
+if [ -z "$to_version" ]; then
+    to_version="$(highest_version)"
+fi
+
+if [ $to_version -eq $current_version ]; then
+    echo "Already up-to-date." >&2
+    exit 1
+fi
+
+if [ $to_version -gt $current_version ]; then
+    migrate_up $current_version $to_version
+else
+    migrate_down $current_version $to_version
+fi
+
+trek-version "$to_version" > /dev/null
+
+echo "Database is now at version $to_version"

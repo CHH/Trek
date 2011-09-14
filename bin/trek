@@ -1,0 +1,68 @@
+#!/bin/bash
+#/ trek: Migrates your database
+#/
+#/ Usage: trek [options] <command>
+#/
+#/ Some Useful commands:
+#/     init        Setups the Database for usage with trek
+#/     new         Creates a new migrate script
+#/     commands    Lists all commands
+#/     migrations  Lists all migrations
+#/     migrate     Migrates the Database up to the most recent migration
+#/     version     Reports the current database version
+#/
+
+DIRNAME=$(dirname $0)
+TREK_DIR=$(readlink -f "$DIRNAME/../")
+
+export PATH="$TREK_DIR/libexec:$PATH"
+
+for arg in $@; do
+    case $arg in
+        --chdir|-C)
+            cd "$2"
+            shift
+            shift
+            ;;
+        --config|-c)
+            DBCONFIG="$2"
+            shift
+            shift
+            ;;
+        --migrations|-m)
+            MIGRATIONS_DIR="$2"
+            shift
+            shift
+            ;;
+        *)
+            ;;
+    esac
+done
+
+cmd="$1"
+shift
+
+if [ -z "$MIGRATIONS_DIR" ]; then
+    MIGRATIONS_DIR="$(pwd)"
+fi
+
+if [ -z "$DBCONFIG" ]; then
+    DBCONFIG="$(pwd)/dbconfig"
+fi
+
+export MIGRATIONS_DIR
+export DBCONFIG
+
+if [ -z "$cmd" ]; then 
+    trek-help >&2
+    exit 1
+fi
+
+cmd_path=$(command -v "trek-$cmd")
+
+if [ -z "$cmd_path" ]; then
+    echo "trek: Command \"$cmd\" not found." >&2
+    exit 1
+fi
+
+exec "$cmd_path" "$@"

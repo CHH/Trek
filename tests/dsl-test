@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+set -e
+
+DIRNAME=$(dirname $0)
+MIGRATOR_DIR=$(readlink -f "$DIRNAME/../")
+
+source "$MIGRATOR_DIR/lib/migrator-dsl"
+
+execute() {
+    local query="$1"
+
+    if [ -z "$query" ]; then
+        query="$(cat)"
+    fi
+
+    echo "$query"
+}
+
+assert_equals() {
+    if [ "$1" = "$2" ]; then
+        echo -n "."
+        return 0
+    else
+        echo "FAILURE:" >&2
+        echo "@$2" >&2
+        echo "-$1" >&2
+        echo
+        return 1
+    fi
+}
+
+test_create_table() {
+    local sql=$(create_table users \
+        column id "integer" auto_increment \
+        column username text \
+        column password text)
+
+    local ASSERTION="CREATE TABLE users (id INTEGER AUTO_INCREMENT, username TEXT, password TEXT);"
+    
+    assert_equals "$ASSERTION" "$sql"
+}
+
+test_drop() {
+    assert_equals "$(drop_table users)" "DROP TABLE users;"
+}
+
+test_create_table
+test_drop
+
+echo
+echo "All Tests passed"
