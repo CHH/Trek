@@ -1,4 +1,13 @@
 #!/bin/bash
+#/ Displays the current database version.
+#/
+#/ Usage: trek version [<version>]
+#/
+#/ Arguments:
+#/   version: Sets the database version manually to <version> without
+#/            triggering a migration.
+#/            THIS IS FOR INTERNAL USE ONLY!
+#/
 
 # Update version if given
 if [ -n "$1" ]; then

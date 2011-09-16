@@ -1,6 +1,10 @@
 #!/bin/bash
 #/ Sends queries received via STDIN to the configured Database
 #/
+#/ Usage: trek query [<query>]
+#/
+#/ Queries must be ended with a semicolon!
+#/
 
 set -e
 

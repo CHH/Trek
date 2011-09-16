@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+#/ Lists all available Migrations, marks the most recent applied
+#/ migration with a star.
+#/
+#/ Usage: trek migrations [--bare]
+#/
+#/ Options:
+#/   --bare: Output without formatting
+#/
 
 current_version=$(trek-version)
 

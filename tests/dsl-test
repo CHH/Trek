@@ -3,9 +3,9 @@
 set -e
 
 DIRNAME=$(dirname $0)
-MIGRATOR_DIR=$(readlink -f "$DIRNAME/../")
+TREK_DIR=$(readlink -f "$DIRNAME/../")
 
-source "$MIGRATOR_DIR/lib/migrator-dsl"
+source "$TREK_DIR/lib/trek-dsl"
 
 execute() {
     local query="$1"
@@ -45,8 +45,28 @@ test_drop() {
     assert_equals "$(drop_table users)" "DROP TABLE users;"
 }
 
+test_add_column() {
+    assert_equals "$(add_column users password text)" "ALTER TABLE users ADD COLUMN password TEXT;"
+}
+
+test_rename_column() {
+    assert_equals "$(rename_column users birth birthday)" "ALTER TABLE users CHANGE COLUMN birth birthday;"
+}
+
+test_change_column() {
+    assert_equals "$(change_column users birthday DATE)" "ALTER TABLE users MODIFY COLUMN birthday DATE;"
+}
+
+test_remove_column() {
+    assert_equals "$(remove_column users birthday)" "ALTER TABLE users DROP COLUMN birthday;"
+}
+
 test_create_table
 test_drop
+test_add_column
+test_rename_column
+test_change_column
+test_remove_column
 
 echo
 echo "All Tests passed"

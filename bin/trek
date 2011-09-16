@@ -3,13 +3,20 @@
 #/
 #/ Usage: trek [options] <command>
 #/
+#/ Options:
+#/   --chdir|-C:      Path to change the working-directory to, before
+#/                    running trek commands
+#/   --config|-c:     Path to Database Config, defaults to $PWD/dbconfig
+#/   --migrations|-m  Path where migrations are located, defaults to $PWD
+#/
 #/ Some Useful commands:
-#/     init        Setups the Database for usage with trek
-#/     new         Creates a new migrate script
-#/     commands    Lists all commands
-#/     migrations  Lists all migrations
-#/     migrate     Migrates the Database up to the most recent migration
-#/     version     Reports the current database version
+#/   help        Show help for a command
+#/   init        Setups the Database for usage with trek
+#/   new         Creates a new migrate script
+#/   commands    Lists all commands
+#/   migrations  Lists all migrations
+#/   migrate     Migrates the Database up to the most recent migration
+#/   version     Reports the current database version
 #/
 
 DIRNAME=$(dirname $0)

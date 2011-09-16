@@ -71,7 +71,7 @@ add_column() {
     shift
     shift
 
-    options="$@"
+    options=$(to_uppercase "$@")
 
     execute <<SQL
 ALTER TABLE $table ADD COLUMN $column $options;
@@ -105,7 +105,7 @@ change_column() {
     shift
     shift
 
-    options="$@"
+    options=$(to_uppercase "$@")
 
     execute <<SQL
 ALTER TABLE $table MODIFY COLUMN $column $options;

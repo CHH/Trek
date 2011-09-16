@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
+#/ Migrates the Database
+#/
+#/ Usage: trek migrate [<version>]
+#/
+#/ Arguments:
+#/   version: Defaults to the version of the latest migration. If the
+#/            version is given and lower than the current Database version
+#/            then the Database is migrated down, otherwise it's
+#/            migrated up
+#/
 
 set -e
 

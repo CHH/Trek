@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+#/ Sets up the Database for usage with Trek
+#/
+#/ Usage: trek init
+#/
 
 table_exists() {
     local result=$(trek-query <<< "SHOW TABLES LIKE '$1';")

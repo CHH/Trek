@@ -1,4 +1,12 @@
 #!/bin/bash
+#/ Creates skeletons for a new migration
+#/
+#/ Usage: trek new <name>
+#/
+#/ Arguments:
+#/   name: A descriptive name for the migration. Spaces get replaced
+#/         by dashes.
+#/
 
 DIRNAME=$(dirname $0)
 

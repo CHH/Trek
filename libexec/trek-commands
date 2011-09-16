@@ -1,6 +1,8 @@
 #!/bin/bash
 #/ Displays all commands
 #/
+#/ Usage: trek commands
+#/
 
 COMMAND_DIR=$(dirname "$0")
 
