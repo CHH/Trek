@@ -126,7 +126,7 @@ Usage:
     trek migrate [<version>]
 
 Probably the most important command. Invoked with no arguments
-`trek-migrate` applies all migrations which are not applied.
+`trek-migrate` applies all migrations up to and including the latest.
 
 It also takes an optional second argument, which specifies a version
 to migrate to. If this version is lower as the current database version
