@@ -1,4 +1,3 @@
-
 Trek
 ====
 
@@ -12,8 +11,7 @@ already planned.
 Install
 -------
 
-Just clone the git repo somewhere and point your `PATH` to
-the `bin` directory.
+Just clone the git repo somewhere and add the `bin` directory to your `$PATH`.
 
 Usage
 -----
