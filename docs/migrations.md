@@ -112,6 +112,7 @@ Now the schema should be alright:
 
 Phew, that was close! Mission accomplished!
 
+<!--
 The example is finished now, so we will look a bit more in depth
 at the language which Trek provides for writing migrations.
 
@@ -132,5 +133,7 @@ left by higher-level commands.
 
 Trek provides you with quite a few commands which automate common 
 tasks in schema managment, without doing SQL.
+
+-->
 
 
