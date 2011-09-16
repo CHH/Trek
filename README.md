@@ -1,7 +1,7 @@
 Trek
 ====
 
-Assists you on your journy through the mountainous areas of Database
+Assists you on your journey through the mountainous areas of Database
 Scheme Managment.
 
 Trek works for now *only in MySQL*, though the basic foundation
