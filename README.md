@@ -101,8 +101,7 @@ database's version is increased. The `.down` file is executed when
 the database is migrated to a previous version. The `.down` file
 should do the exact opposite of the `.up` file.
 
-For more information on migrations see the Readme about migrations in
-`docs/migrations.md`.
+For more information on migrations see the [Readme about migrations](docs/migrations.md).
 
 ### trek-migrations
 
