@@ -1,8 +1,7 @@
-
 Trek
 ====
 
-Assists you on your journy through the mountainous areas of Database
+Assists you on your journey through the mountainous areas of Database
 Scheme Managment.
 
 Trek works for now *only in MySQL*, though the basic foundation
@@ -12,8 +11,7 @@ already planned.
 Install
 -------
 
-Just clone the git repo somewhere and point your `PATH` to
-the `bin` directory.
+Just clone the git repo somewhere and add the `bin` directory to your `$PATH`.
 
 Usage
 -----
@@ -103,8 +101,7 @@ database's version is increased. The `.down` file is executed when
 the database is migrated to a previous version. The `.down` file
 should do the exact opposite of the `.up` file.
 
-For more information on migrations see the Readme about migrations in
-`docs/migrations.md`.
+For more information on migrations see the [Readme about migrations](https://github.com/CHH/Trek/blob/master/docs/migrations.md).
 
 ### trek-migrations
 
@@ -129,7 +126,7 @@ Usage:
     trek migrate [<version>]
 
 Probably the most important command. Invoked with no arguments
-`trek-migrate` applies all migrations which are not applied.
+`trek-migrate` applies all migrations up to and including the latest.
 
 It also takes an optional second argument, which specifies a version
 to migrate to. If this version is lower as the current database version

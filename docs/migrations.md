@@ -1,4 +1,3 @@
-
 How to write Migrations
 =======================
 
@@ -28,12 +27,19 @@ That means for our example:
  * The `.up` file should create the `users` table.
  * The `.down` file should drop the `users` table.
 
+ * * *
+
 ### Aside:
 
-You noticed that the migrations contain a number as first part of the
+You might have noticed that the migrations contain a number as first part of the
 file name. This number is a timestamp in the form
-<YearMonthDayHourMinuteSecond> and, once migrated, is written into the
-database as version number.
+\<YearMonthDayHourMinuteSecond\> and, once migrated, is written into the
+database as **version number**. 
+This also contributes to fewer merge conflicts when multiple people on the team create migrations, 
+as they unique (in practice). Though, the best way still is to communicate with your teammates 
+about schema changes.
+
+ * * *
 
 Now back to our example.
 
@@ -106,6 +112,7 @@ Now the schema should be alright:
 
 Phew, that was close! Mission accomplished!
 
+<!--
 The example is finished now, so we will look a bit more in depth
 at the language which Trek provides for writing migrations.
 
@@ -126,5 +133,7 @@ left by higher-level commands.
 
 Trek provides you with quite a few commands which automate common 
 tasks in schema managment, without doing SQL.
+
+-->
 
 
