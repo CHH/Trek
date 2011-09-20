@@ -44,7 +44,7 @@ useful.
 In the `.up` file write the following:
 
     create_table users\
-        column id int unsigned auto_increment\
+        column id int unsigned primary key auto_increment\
         column username text
 
 And in the `.down` file we drop the table:

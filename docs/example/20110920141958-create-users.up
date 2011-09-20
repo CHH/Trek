@@ -1,0 +1,3 @@
+create_table users\
+    column id int unsigned primary key auto_increment\
+    column username text
