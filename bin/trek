@@ -41,6 +41,10 @@ for arg in $@; do
             shift
             shift
             ;;
+        --debug)
+            TREK_DEBUG=true
+            shift
+            ;;
         *)
             ;;
     esac
@@ -59,6 +63,7 @@ fi
 
 export MIGRATIONS_DIR
 export DBCONFIG
+export TREK_DEBUG
 
 if [ -z "$cmd" ]; then 
     trek-help >&2

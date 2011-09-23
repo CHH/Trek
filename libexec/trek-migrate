@@ -15,6 +15,10 @@ set -e
 DIRNAME=$(dirname "$0")
 LIB_DIR=$(readlink -f "$DIRNAME/../lib/")
 
+VENDOR=$(trek-database-vendor)
+
+source "$LIB_DIR/vendors/stubs.bash"
+source "$LIB_DIR/vendors/$VENDOR.bash"
 source "$LIB_DIR/trek-dsl"
 
 migration_version() {

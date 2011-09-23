@@ -6,6 +6,7 @@ DIRNAME=$(dirname $0)
 TREK_DIR=$(readlink -f "$DIRNAME/../")
 
 source "$TREK_DIR/lib/trek-dsl"
+source "$TREK_DIR/lib/vendors/stubs.bash"
 
 execute() {
     local query="$1"
@@ -32,13 +33,21 @@ assert_equals() {
 
 test_create_table() {
     local sql=$(create_table users \
-        column id "integer" auto_increment \
+        column id "integer" auto_increment primary_key\
         column username text \
         column password text)
 
-    local ASSERTION="CREATE TABLE users (id INTEGER AUTO_INCREMENT, username TEXT, password TEXT);"
+    local ASSERTION="CREATE TABLE users (id INT(11) AUTO_INCREMENT PRIMARY KEY, username TEXT, password TEXT);"
     
     assert_equals "$ASSERTION" "$sql"
+
+    local sql2=$(create_table users\
+        column id int unsigned primary key auto_increment\
+        column username text)
+
+    assert_equals\
+        "CREATE TABLE users (id INT(11) UNSIGNED PRIMARY KEY AUTO_INCREMENT, username TEXT);"\
+        "$sql2"
 }
 
 test_drop() {
@@ -46,19 +55,38 @@ test_drop() {
 }
 
 test_add_column() {
-    assert_equals "$(add_column users password text)" "ALTER TABLE users ADD COLUMN password TEXT;"
+    assert_equals\
+        "$(change_table users add password text)"\
+        "ALTER TABLE users ADD COLUMN password TEXT;"
 }
 
 test_rename_column() {
-    assert_equals "$(rename_column users birth birthday)" "ALTER TABLE users CHANGE COLUMN birth birthday;"
+    assert_equals\
+        "$(change_table users rename birth birthday)"\
+        "ALTER TABLE users CHANGE COLUMN birth birthday;"
 }
 
 test_change_column() {
-    assert_equals "$(change_column users birthday DATE)" "ALTER TABLE users MODIFY COLUMN birthday DATE;"
+    assert_equals\
+        "$(change_table users change birthday DATE)"\
+        "ALTER TABLE users MODIFY COLUMN birthday DATE;"
 }
 
 test_remove_column() {
-    assert_equals "$(remove_column users birthday)" "ALTER TABLE users DROP COLUMN birthday;"
+    assert_equals\
+        "$(change_table users remove birthday)"\
+        "ALTER TABLE users DROP COLUMN birthday;"
+}
+
+test_change_table() {
+    local sql=$(change_table users\
+        add password text\
+        remove birthdate\
+        rename foo bar)
+
+    assert_equals\
+        "ALTER TABLE users ADD COLUMN password TEXT, DROP COLUMN birthdate, CHANGE COLUMN foo bar;"\
+        "$sql"
 }
 
 test_create_table
@@ -67,6 +95,7 @@ test_add_column
 test_rename_column
 test_change_column
 test_remove_column
+test_change_table
 
 echo
 echo "All Tests passed"

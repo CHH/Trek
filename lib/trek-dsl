@@ -14,6 +14,38 @@ to_uppercase() {
     tr "[:lower:]" "[:upper:]" <<< "$1"
 }
 
+map_type() {
+    if [ $# -eq 0 ]
+    then
+        echo "map_type: Type missing." >&2
+        return 1
+    fi
+
+    local datatype=
+
+    case "$1" in
+        bool|boolean)
+            datatype="TINYINT(1)"
+            ;;
+        string)
+            datatype="VARCHAR(255)"
+            ;;
+        int|"integer")
+            datatype="INT(11)"
+            ;;
+        class)
+            datatype="VARCHAR(255)"
+            ;;
+        *)
+            datatype="$1"
+            ;;
+    esac
+
+    datatype=$(vendor_map_type "$datatype")
+
+    to_uppercase "$datatype"
+}
+
 create_table() {
     local sql=
     local table=
@@ -32,12 +64,20 @@ create_table() {
                 last_column="$2"
                 shift
                 ;;
+            primary_key)
+                column_def="$column_def PRIMARY KEY"
+                ;;
+            auto_increment)
+                if [ -n "$last_column" ]; then
+                    column_def="$column_def $(vendor_autoincrement_expression)"
+                fi
+                ;;
             *)
                 if [ -z "$last_column" ]; then
                     table="$1"
                 else
-                    local option=$(to_uppercase "$1")
-                    column_def="$column_def $option"
+                    local mapped_type=$(map_type "$1")
+                    column_def="$column_def $mapped_type"
                 fi
                 ;;
         esac
@@ -46,83 +86,82 @@ create_table() {
 
     sql="CREATE TABLE $table ($column_def)"
 
-    execute "$sql;"
+    execute <<< "$sql"
+}
+
+change_table() {
+    local table="$1"
+    shift
+
+    local last_column=
+    local sql=
+    local alter_spec=
+
+    if [ -z "$table" ]; then
+        echo "change_table: No Table given" >&2
+        return 1
+    fi
+
+    while [ -n "$1" ]
+    do
+        arg="$1"
+        shift
+
+        case $arg in
+            add)
+                if [ -n "$last_column" ]; then
+                    alter_spec="$alter_spec,"
+                fi
+                alter_spec="$alter_spec ADD COLUMN $1"
+                last_column="$1"
+                shift
+                ;;
+            change)
+                if [ -n "$last_column" ]; then
+                    alter_spec="$alter_spec,"
+                fi
+                alter_spec="$alter_spec MODIFY COLUMN $1"
+                last_column="$1"
+                shift
+                ;;
+            rename)
+                if [ -n "$last_column" ]; then
+                    alter_spec="$alter_spec,"
+                fi
+                alter_spec="$alter_spec CHANGE COLUMN $1 $2"
+                last_column="$1"
+                shift
+                shift
+                ;;
+            remove)
+                if [ -n "$last_column" ]; then
+                    alter_spec="$alter_spec,"
+                fi
+                alter_spec="$alter_spec DROP COLUMN $1"
+                last_column="$1"
+                shift
+                ;;
+            *)
+                local mapped_type=$(map_type "$arg")
+                alter_spec="$alter_spec $mapped_type"
+                ;;
+        esac
+    done
+
+    sql="ALTER TABLE $table$alter_spec;"
+
+    execute <<< "$sql"
 }
 
 drop_table() {
     local table="$1"
 
     if [ -z "$table" ]; then
-        echo "drop: No Table given" >&2
+        echo "drop_table: No Table given" >&2
         return 1
     fi
 
     execute "DROP TABLE $table;"
 }
 
-add_column() {
-    if [ $# -lt 2 ]; then
-        echo "add_column: Not enough arguments" >&2
-        return 1
-    fi
-
-    table="$1"
-    column="$2"
-    shift
-    shift
-
-    options=$(to_uppercase "$@")
-
-    execute <<SQL
-ALTER TABLE $table ADD COLUMN $column $options;
-SQL
-}
-
-rename_column() {
-    if [ $# -lt 3 ]; then
-        echo "rename_column: Not enough arguments" >&2
-        return 1
-    fi
-    
-    table="$1"
-    column="$2"
-    to_column="$3"
-
-    execute <<SQL
-ALTER TABLE $table CHANGE COLUMN $column $to_column;
-SQL
-}
-
-change_column() {
-    if [ $# -lt 3 ]; then
-        echo "change_column: Not enough arguments" >&2
-        return 1
-    fi
-
-    table="$1"
-    column="$2"
-
-    shift
-    shift
-
-    options=$(to_uppercase "$@")
-
-    execute <<SQL
-ALTER TABLE $table MODIFY COLUMN $column $options;
-SQL
-}
-
-remove_column() {
-    if [ $# -lt 2 ]; then
-        echo "remove_column: Not enough arguments" >&2
-        return 1
-    fi
-
-    table="$1"
-    column="$2"
-
-    execute <<SQL
-ALTER TABLE $table DROP COLUMN $column;
-SQL
-}
 

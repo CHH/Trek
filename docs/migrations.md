@@ -35,8 +35,9 @@ You might have noticed that the migrations contain a number as first part of the
 file name. This number is a timestamp in the form
 \<YearMonthDayHourMinuteSecond\> and, once migrated, is written into the
 database as **version number**. 
-This also contributes to fewer merge conflicts when multiple people on the team create migrations, 
-as they unique (in practice). Though, the best way still is to communicate with your teammates 
+This also contributes to fewer merge conflicts when multiple people on 
+the team create migrations, as they're unique (in practice). Though, 
+the best way still is to communicate with your teammates 
 about schema changes.
 
  * * *

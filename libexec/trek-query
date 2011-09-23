@@ -9,8 +9,20 @@
 set -e
 
 DIRNAME=$(dirname $0)
+LIB_DIR=$(readlink -f "$DIRNAME/../lib")
 
 source "$DBCONFIG"
+
+# Legacy Behavior
+if [ -z "$vendor" ]; then
+    vendor=mysql
+fi
+
+# This file includes the main interface for vendor extensions
+source "$LIB_DIR/vendors/stubs.bash"
+
+# Load the vendor specific commands
+source "$LIB_DIR/vendors/$vendor.bash"
 
 query="$(cat)"
 
@@ -19,32 +31,13 @@ if [ -z "$query" ]; then
     exit 1
 fi
 
-options=
-
 if [ -z "$database" ]; then
     echo "No Database configured. Please set the \"database\" variable in $DBCONFIG" >&2
     exit 1
 fi
 
-if [ -n "$username" ]; then
-    options="$options --user=$username"
+if [ -n "$TREK_DEBUG" ]; then
+    echo "[DEBUG][QUERY] $query" >&2
 fi
 
-if [ -n "$password" ]; then
-    options="$options --password=$password"
-fi
-
-if [ -n "$hostname" ]; then
-    options="$options --host=$hostname"
-fi
-
-if [ -n "$port" ]; then
-    options="$options --port=$port"
-fi
-
-if [ -n "$socket" ]; then
-    options="$options --socket=$socket"
-fi
-
-mysql $options $database <<< "$query"
-
+vendor_execute <<< "$query"

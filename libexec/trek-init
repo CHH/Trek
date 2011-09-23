@@ -4,13 +4,12 @@
 #/ Usage: trek init
 #/
 
-table_exists() {
-    local result=$(trek-query <<< "SHOW TABLES LIKE '$1';")
+VENDOR=$(trek-database-vendor)
+DIRNAME=$(dirname "$0")
+LIB_DIR=$(readlink -f "$DIRNAME/../lib/")
 
-    if [ -z "$result" ]; then
-        return 1
-    fi
-}
+source "$LIB_DIR/vendors/stubs.bash"
+source "$LIB_DIR/vendors/$VENDOR.bash"
 
 create_version_table() {
     trek-query <<SQL
@@ -20,7 +19,7 @@ SQL
 
 }
 
-if table_exists "trek_version"
+if vendor_table_exists "trek_version"
 then
     echo "Already initialized." >&2
     exit 1
