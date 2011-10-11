@@ -91,11 +91,11 @@ it "add password to users":
 
 In the `.up` file we write:
 
-    add_column users password text
+    change_table users add password text
 
 We drop the column in the `.down` file:
 
-    remove_column users password
+    change_table users remove password
 
 Then we migrate our database again:
 
