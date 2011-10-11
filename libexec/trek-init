@@ -16,7 +16,6 @@ create_version_table() {
 CREATE TABLE trek_version (version TEXT);
 INSERT INTO trek_version(version) VALUES ('0');
 SQL
-
 }
 
 if vendor_table_exists "trek_version"
