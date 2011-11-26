@@ -5,11 +5,9 @@
 #/
 
 VENDOR=$(trek-database-vendor)
-DIRNAME=$(dirname "$0")
-LIB_DIR=$(readlink -f "$DIRNAME/../lib/")
 
-source "$LIB_DIR/vendors/stubs.bash"
-source "$LIB_DIR/vendors/$VENDOR.bash"
+source "$TREK_LIB_DIR/vendors/stubs.bash"
+source "$TREK_LIB_DIR/vendors/$VENDOR.bash"
 
 create_version_table() {
     trek-query <<SQL

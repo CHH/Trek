@@ -6,13 +6,10 @@
 
 file="$1"
 
-DIRNAME=$(dirname "$0")
-TREK_DIR=$(readlink -f "$DIRNAME/../")
-
 if [ -z "$file" ]; then
-    file="$TREK_DIR/bin/trek"
+    file="$TREK_ROOT/bin/trek"
 else
-    file="$DIRNAME/trek-$1"
+    file="$TREK_LIBEXEC_DIR/trek-$1"
 fi
 
 grep '^#/' <"$file" | cut -c4- >&2

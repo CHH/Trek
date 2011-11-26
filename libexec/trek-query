@@ -8,9 +8,6 @@
 
 set -e
 
-DIRNAME=$(dirname $0)
-LIB_DIR=$(readlink -f "$DIRNAME/../lib")
-
 source "$DBCONFIG"
 
 # Legacy Behavior
@@ -19,10 +16,10 @@ if [ -z "$vendor" ]; then
 fi
 
 # This file includes the main interface for vendor extensions
-source "$LIB_DIR/vendors/stubs.bash"
+source "$TREK_LIB_DIR/vendors/stubs.bash"
 
 # Load the vendor specific commands
-source "$LIB_DIR/vendors/$vendor.bash"
+source "$TREK_LIB_DIR/vendors/$vendor.bash"
 
 query="$(cat)"
 

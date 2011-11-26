@@ -19,10 +19,29 @@
 #/   version     Reports the current database version
 #/
 
-DIRNAME=$(dirname $0)
-TREK_DIR=$(readlink -f "$DIRNAME/../")
+function realpath {
+    local path="$1"
 
-export PATH="$TREK_DIR/libexec:$PATH"
+    if [ -z "$path" ]; then
+        echo "realpath: Path is empty" >&3
+        return 1
+    fi
+
+    local cwd="$(pwd)"
+
+    cd -L "$path"
+    echo "$(pwd)"
+    cd "$cwd"
+}
+
+DIRNAME=$(dirname $0)
+
+export TREK_ROOT=$(realpath "$DIRNAME/../")
+export TREK_LIB_DIR="$TREK_ROOT/lib"
+export TREK_LIBEXEC_DIR="$TREK_ROOT/libexec"
+export TREK_BIN_DIR="$TREK_ROOT/bin"
+
+export PATH="$TREK_ROOT/libexec:$PATH"
 
 for arg in $@; do
     case $arg in
